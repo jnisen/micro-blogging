@@ -12,7 +12,7 @@ const CreateTweet = ({ addTweets }) => {
     const characterLimit = 140;
 
     const [tweet, setTweets] = useState({
-        name: '',
+        userName: '',
         content: ''
     })
 
@@ -21,7 +21,7 @@ const CreateTweet = ({ addTweets }) => {
     const handleChange = e => {
 
         const newTweet = {
-            name: 'Pepe',
+            userName: 'Batman',
             content: e.target.value,
         }
 
@@ -37,7 +37,7 @@ const CreateTweet = ({ addTweets }) => {
         addTweets(tweet)
 
         const restoreTextArea = {
-            name: '',
+            userName: '',
             content: ''
         }
         

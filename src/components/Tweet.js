@@ -1,12 +1,12 @@
 
 
 const Tweet = ({ tweet }) => {
-    const { id, name, content, create_tweet } = tweet;
+    const { id, userName, content, date } = tweet;
     return (
         <div className="tweet">
             <div className="dateandname">
-                <small>{name}</small>
-                <small>{create_tweet}</small>
+                <small>{userName}</small>
+                <small>{date}</small>
             </div>
             <div className="content">
                 <span>{content}</span>
