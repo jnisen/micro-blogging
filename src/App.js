@@ -1,11 +1,14 @@
 /* React */
 import { Fragment, useState, useEffect } from 'react';
+import { Route, Switch } from 'react-router-dom';
 
 /* Components */
 import CreateTweet from './components/CreateTweet'
 import TweetList from './components/TweetList'
 import Spinner from './components/Spinner'
 import ButtonDisabled from './components/ButtonDisabled'
+import Navbar from './components/Navbar'
+import Profile from './components/Profile'
 
 /* CSS */
 import './index.css';
@@ -57,9 +60,9 @@ function App() {
 
       const newTweetToAdd = [...tweets, newTweet]
 
-      sortByCreateTweet(newTweetToAdd)
+      const tweetListSortedByDate = sortByCreateTweet(newTweetToAdd)
 
-      setTweets(newTweetToAdd)
+      setTweets(tweetListSortedByDate)
 
       const response = await axios.post(serverTweets, newTweet)
 
@@ -70,22 +73,30 @@ function App() {
     }
   }
 
-
   return (
-    <Fragment>
-      <div className="container">
-        <CreateTweet addTweets={addTweets} />
-      </div>
-      <div className="tweetlist">
-        {spinner ?
-          <Fragment>
-            <Spinner />
-            <ButtonDisabled />
-          </Fragment> :
-          <TweetList tweets={tweets} />
-        }
-      </div>
-    </Fragment>
+
+    <div className="wrapper">
+      <Navbar />
+      <Switch>
+        <Route path="/" exact>
+          <div className="container">
+            <CreateTweet addTweets={addTweets} />
+          </div>
+          <div className="tweetlist">
+            {spinner ?
+              <Fragment>
+                <Spinner />
+                <ButtonDisabled />
+              </Fragment> :
+              <TweetList tweets={tweets} />
+            }
+          </div>
+        </Route>
+        <Route path="/profile">
+          <Profile />
+        </Route>
+      </Switch>
+    </div>
   );
 }
 

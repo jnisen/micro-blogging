@@ -7,6 +7,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 /* Components */
 import ButtonDisabled from './ButtonDisabled'
 
+
 const CreateTweet = ({ addTweets }) => {
 
     const characterLimit = 140;
@@ -18,10 +19,12 @@ const CreateTweet = ({ addTweets }) => {
 
     const [maxtweet, setMaxTweet] = useState(false)
 
+    const username = localStorage.getItem('username')
+
     const handleChange = e => {
 
         const newTweet = {
-            userName: 'Batman',
+            userName: username,
             content: e.target.value,
         }
 
