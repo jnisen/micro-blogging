@@ -21,6 +21,8 @@ import ButtonDisabled from './components/ButtonDisabled';
 /* Page */
 import NotFound from './NotFound'
 
+/* hosting firbase name : https://microblogging-app-mb555.web.app/ */
+
 function App() {
 
   const [spinner, setSpinner] = useState(true);
