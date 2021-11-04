@@ -1,11 +1,19 @@
-/* Componenets */
+/* React */
+import {useContext} from 'react'
 
+/* Componenets */
 import Tweet from './Tweet'
 
-const TweetList = ({ tweets }) => {
+/* Context */
+import { TwitterContext } from '../context/twitterContext';
+
+const TweetList = () => {
+
+    const {tweetsAPI} = useContext(TwitterContext)
+
     return (
         <div>
-            {tweets.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)}
+            {tweetsAPI.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)}
         </div>
     )
 }

@@ -43,7 +43,8 @@ body {
     background-color: #007BFF;
     color: #FFFFFF;
     position: absolute;
-    top: 23%;
+    position: absolute;
+    top: 32%;
     right: 27%;
     padding: 2px 7px 3px 8px;
     font-weight: 400;
@@ -90,7 +91,7 @@ span {
     background-color: gray;
     color: #FFFFFF;
     position: absolute;
-    top: 23%;
+    top: 32%;
     right: 27%;
     padding: 2px 7px 3px 8px;
     font-weight: 400;
@@ -104,7 +105,7 @@ span {
     border-radius: 4px;
     color: #721C24;
     position: absolute;
-    top: 21%;
+    top: 32%;
     right: 48%;
 }
 
