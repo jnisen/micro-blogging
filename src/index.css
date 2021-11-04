@@ -202,3 +202,10 @@ span {
     margin-left: 20.5em;
     cursor: pointer;
 }
+
+.p-message{
+    color:black;
+    background-color: lightpink;
+    width:30%;
+    text-align: center;
+}

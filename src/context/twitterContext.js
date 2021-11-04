@@ -20,7 +20,7 @@ const TwitterProvider = (props) => {
 
             setTweetsAPI(data)
 
-        }, 500)
+        }, 1000)
 
         return () => clearInterval(interval);
     }, [tweetsAPI])

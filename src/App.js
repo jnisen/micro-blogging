@@ -18,6 +18,9 @@ import TwitterProvider from './context/twitterContext';
 import { useEffect, useState, Fragment } from "react";
 import ButtonDisabled from './components/ButtonDisabled';
 
+/* Page */
+import NotFound from './NotFound'
+
 function App() {
 
   const [spinner, setSpinner] = useState(true);
@@ -51,6 +54,7 @@ function App() {
           <Route path="/profile">
             <Profile />
           </Route>
+            <Route path={"*"} component={NotFound} />
         </Switch>
       </div>
     </TwitterProvider>

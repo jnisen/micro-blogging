@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 /* css */
 import '../index.css'
 
+
 const Navbar = () => {
     return (
         <nav className="navbar">
