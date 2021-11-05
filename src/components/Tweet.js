@@ -1,7 +1,7 @@
 
 
 const Tweet = ({ tweet }) => {
-    const { id, userName, content, date } = tweet;
+    const {userName, content, date } = tweet;
     return (
         <div className="tweet">
             <div className="dateandname">

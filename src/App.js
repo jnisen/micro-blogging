@@ -16,7 +16,7 @@ import TwitterProvider from './context/twitterContext';
 
 /* React */
 import { useEffect, useState, Fragment } from "react";
-import ButtonDisabled from './components/ButtonDisabled';
+import Button from './components/Button';
 
 /* Page */
 import NotFound from './NotFound'
@@ -24,6 +24,8 @@ import NotFound from './NotFound'
 /* hosting firbase name : https://microblogging-app-mb555.web.app/ */
 
 function App() {
+
+  const stateButton = true;
 
   const [spinner, setSpinner] = useState(true);
 
@@ -47,16 +49,14 @@ function App() {
               {spinner ?
                 <Fragment>
                   <Spinner />
-                  <ButtonDisabled />
+                  <Button tweetstate={stateButton} />
                 </Fragment>
                 :
                 <TweetList />}
             </div>
           </Route>
-          <Route path="/profile">
-            <Profile />
-          </Route>
-            <Route path={"*"} component={NotFound} />
+          <Route path="/profile" component ={Profile}/>
+          <Route path={"*"} component={NotFound} />
         </Switch>
       </div>
     </TwitterProvider>

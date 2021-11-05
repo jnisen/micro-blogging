@@ -11,6 +11,7 @@ const TwitterProvider = (props) => {
 
     const [tweetsAPI, setTweetsAPI] = useState([])
 
+
     useEffect(() => {
 
         const interval = setTimeout(async () => {
@@ -22,6 +23,7 @@ const TwitterProvider = (props) => {
 
         }, 1000)
 
+        
         return () => clearInterval(interval);
     }, [tweetsAPI])
 

@@ -6,7 +6,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { nanoid } from 'nanoid';
 
 /* Components */
-import ButtonDisabled from './ButtonDisabled'
+import Button from './Button'
 
 /* Packages */
 import axios from 'axios'
@@ -15,46 +15,45 @@ const CreateTweet = () => {
 
     const characterLimit = 140;
 
-    const [tweets, setTweets] = useState({
-        userName: '',
-        content: '',
-    })
+    const [tweets, setTweets] = useState('')
 
     const [maxtweet, setMaxTweet] = useState(false)
-
+    const [minTweet, setMinTweet] = useState(true)
 
     const username = localStorage.getItem('username')
 
     const handleChange = e => {
 
-        const newTweet = {
-            id: nanoid(),
-            userName: username,
-            content: e.target.value,
-            date: new Date().toISOString()
-        }
-
-        setTweets(newTweet)
-
-
         if (e.target.value.length > characterLimit) setMaxTweet(true)
-        else setMaxTweet(false)
-
+        else if (e.target.value.length === 0) 
+        {
+            setMinTweet(true)
+            setTweets('')
+        }
+        else 
+        {
+            setTweets(e.target.value)
+            setMaxTweet(false)
+            setMinTweet(false)
+        }
     }
 
     async function handleClick() {
 
         try {
+    
+            const newTweet = {
+                id: nanoid(),
+                userName: username,
+                content: tweets,
+                date: new Date().toISOString()
+            }   
+
             const serverTweets = 'https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet'
 
-            const response = await axios.post(serverTweets, tweets)
+            const response = await axios.post(serverTweets, newTweet)
 
-            const restoreTextArea = {
-                userName: '',
-                content: ''
-            }
-
-            setTweets(restoreTextArea)
+            setTweets('')
 
             if (response.status === 404) throw new Error('The url provided is not working')
 
@@ -70,21 +69,18 @@ const CreateTweet = () => {
                     cacheMeasurements
                     placeholder="What you have in mind..."
                     required
-                    value={tweets.content}
+                    value={tweets}
                     minRows={7}
                     onChange={handleChange} />
                 {maxtweet ?
                     <div>
                         <p className="message">The tweet can't contain more than 140 chars</p>
-                        <ButtonDisabled />
+                        <Button tweetstate={maxtweet} />
                     </div>
                     :
-                    tweets.content.length > 0 ?
-                        <button className="addtweet"
-                            onClick={handleClick}>
-                            Tweet
-                        </button> :
-                        <ButtonDisabled />}
+                    tweets.length > 0 ?
+                        <Button tweetstate={maxtweet} handleClick={handleClick} /> :
+                        <Button tweetstate={minTweet} />}
 
             </Fragment>
         )

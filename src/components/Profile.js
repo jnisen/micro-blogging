@@ -4,11 +4,15 @@ import { useState } from 'react'
 /* CSS */
 import '../index.css';
 
+/* Router */
+import {useHistory} from 'react-router-dom'
 
 const Profile = () => {
 
     const [username, setUsername] = useState('')
     const [error, setError] = useState(false)
+    
+    const history = useHistory()
 
     const handleChange = e => {
         setError(false)
@@ -25,6 +29,7 @@ const Profile = () => {
             alert('userName Changed')
             setUsername('')
             setError(false)
+            history.push('/')
         }
     }
 
