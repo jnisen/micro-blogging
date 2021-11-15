@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {createContext} from 'react'
+import { createContext } from 'react'
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -10,13 +10,13 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
-export const FirebaseContext = createContext(null) 
+export const FirebaseContext = createContext(null)
 
 export default function Firebase({ children }) {
     const app = initializeApp(firebaseConfig);
     return (
         <FirebaseContext.Provider value={app}>
-            { children }
+            {children}
         </FirebaseContext.Provider>
     )
 }

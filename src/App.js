@@ -1,67 +1,79 @@
 /* React */
 import { Route } from 'react-router-dom';
+import { useState, useEffect } from 'react'
 
 /* Components */
-
 import Navbar from './components/Navbar'
 import Profile from './components/Profile'
 import Home from './components/Home'
 import Signup from './components/Signup'
 import Login from './components/Login'
+import PrivateRoute from './components/PrivateRoute'
 
 /* CSS */
 import './index.css';
 
 /* Provider */
-import TwitterContext from './context/twitterContext';
+import TwitterContext from './context/AuthContext';
 
-/* Packages */
-import axios from 'axios'
-
-import {useEffect, useState} from 'react'
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 function App() {
 
-  const serverTweets = 'https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet'
-
   const [tweetsAPI, setTweetsAPI] = useState([])
   const [isLoading, setLoading] = useState(true)
-
+  const [currentUser, setCurrentUser] = useState(null)
+  const [isUserActive, setIsUserActive] = useState(false)
 
   useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) setCurrentUser({ name: user.displayName, email: user.email })
+      else setIsUserActive(true)
+    });
 
-      const interval = setTimeout(async () => {
+  }, [])
 
-          const api = await axios(serverTweets)
-          const data = api.data.tweets
+  const logout = () => {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      setCurrentUser(null)
+    }).catch((e) =>
+      alert(e.message)
+    )
+  }
 
-          setTweetsAPI(data)
-          setLoading(false)
-      }, 1000)
-
-
-      return () => clearInterval(interval);
-  }, [tweetsAPI])
-
-
-
-  const value = { tweetsAPI, isLoading }
-
+  function signup(email, password) {
+    const auth = getAuth();
+    return createUserWithEmailAndPassword(auth, email, password)
+  }
 
 
+  const value = {
+    tweetsAPI,
+    isLoading,
+    setLoading,
+    setTweetsAPI,
+    currentUser,
+    signup,
+    login: (currentUser) => setCurrentUser(currentUser),
+    loginWithGoogle: (currentUser) => setCurrentUser(currentUser),
+    logout
+  }
 
   return (
     <TwitterContext.Provider value={value}>
-      <div className="app">
-        <Navbar />
-        <div className="container">
-          <Route path="/" exact component={Home} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/login" component={Login} />
-        </div>
-      </div>
+      {isUserActive &&
+        <div className="app">
+          <Navbar />
+          <div className="container">
+            <PrivateRoute path="/" exact component={Home} />
+            <PrivateRoute path="/profile" component={Profile} />
+            <Route path="/signup" component={Signup} />
+            <Route path="/login" component={Login} />
+          </div>
+        </div>}
     </TwitterContext.Provider>
   );
 }

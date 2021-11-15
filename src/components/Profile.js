@@ -23,7 +23,6 @@ const Profile = () => {
         if (username.trim().length === 0) {
             setUsername('')
             setError(true)
-            return
         } else {
             localStorage.setItem('username', username)
             alert('userName Changed')
@@ -46,7 +45,7 @@ const Profile = () => {
                         className="img-tweet-perfil" />
 
                     <input type="file" className="ab"/>
-                    <button  className="abc">Upload</button>
+                    <button  className="ab">Upload</button>
                 </div>
                 <div className="profile-profile">
                     <label className="profile-username">User Name</label>

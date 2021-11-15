@@ -5,11 +5,11 @@ import {useContext} from 'react'
 import Tweet from './Tweet'
 
 /* Context */
-import TwitterContext from '../context/twitterContext';
+import AuthContext from '../context/AuthContext';
 
 const TweetList = () => {
 
-    const {tweetsAPI} = useContext(TwitterContext)
+    const {tweetsAPI} = useContext(AuthContext)
 
     return (
         <div className="tweetlist">

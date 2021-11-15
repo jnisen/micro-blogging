@@ -7,10 +7,16 @@ import { nanoid } from 'nanoid';
 /* Components */
 import Button from './Button'
 
-/* Packages */
-import axios from 'axios'
+
+import { getFirestore, addDoc, collection} from 'firebase/firestore'
+
+import { FirebaseContext } from '../utils/Firebase'
+
 
 const CreateTweet = () => {
+
+    const firebase = useContext(FirebaseContext)
+    const db = getFirestore(firebase);
 
     const [tweet, setTweet] = useState('')
 
@@ -44,14 +50,11 @@ const CreateTweet = () => {
                 date: new Date().toISOString()
             }
 
-            const serverTweets = 'https://micro-blogging-dot-full-stack-course-services.ew.r.appspot.com/tweet'
-
-            const response = await axios.post(serverTweets, newTweet)
+            await addDoc(collection(db, "tweets"), newTweet)
 
             setTweet('')
 
-            if (response.status === 404) throw new Error('The url provided is not working')
-
+        
         } catch (e) {
             alert(e)
         }
