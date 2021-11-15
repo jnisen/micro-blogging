@@ -151,7 +151,10 @@ body {
     color: lightcoral;
     margin-left: 1px;
     font-size: 20px;
+    cursor: pointer;
+
 }
+
 
 small {
     color: #6C757D;

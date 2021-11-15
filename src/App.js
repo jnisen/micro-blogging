@@ -21,6 +21,8 @@ import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut } 
 
 function App() {
 
+  const auth = getAuth();
+
   const [tweetsAPI, setTweetsAPI] = useState([])
   const [isLoading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState(null)
@@ -29,7 +31,11 @@ function App() {
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      if (user) setCurrentUser({ name: user.displayName, email: user.email })
+      console.log(user)
+      if (user) {
+        setCurrentUser({ name: user.displayName, email: user.email, id:user.uid })
+        setIsUserActive(true)
+      }
       else setIsUserActive(true)
     });
 
@@ -45,7 +51,6 @@ function App() {
   }
 
   function signup(email, password) {
-    const auth = getAuth();
     return createUserWithEmailAndPassword(auth, email, password)
   }
 

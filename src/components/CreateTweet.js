@@ -1,5 +1,5 @@
 /* React */
-import { useState, Fragment, useContext} from 'react';
+import { useState, Fragment, useContext } from 'react';
 
 /* Packages */
 import { nanoid } from 'nanoid';
@@ -8,16 +8,16 @@ import { nanoid } from 'nanoid';
 import Button from './Button'
 
 
-import { getFirestore, addDoc, collection} from 'firebase/firestore'
 
 import { FirebaseContext } from '../utils/Firebase'
 
-
+import { getFirestore, addDoc, collection, query, where, getDocs } from 'firebase/firestore'
+import AuthContext from '../context/AuthContext';
 const CreateTweet = () => {
 
     const firebase = useContext(FirebaseContext)
     const db = getFirestore(firebase);
-
+    const { currentUser } = useContext(AuthContext)
     const [tweet, setTweet] = useState('')
 
     const [maxtweet, setMaxTweet] = useState(false)
@@ -43,20 +43,32 @@ const CreateTweet = () => {
 
         try {
 
-            const newTweet = {
-                id: nanoid(),
-                userName: username,
-                content: tweet,
-                date: new Date().toISOString()
-            }
+            const q = query(collection(db, "users"), where("email", "==", currentUser.email));
 
-            await addDoc(collection(db, "tweets"), newTweet)
+            const querySnapshot = await getDocs(q);
 
-            setTweet('')
+            querySnapshot.forEach(async (doc) => {
 
-        
+                const newTweet = {
+                    userId: doc.id,
+                    userName: username,
+                    photoProfile: doc.data().profilePhoto || '',
+                    content: tweet,
+                    date: new Date().toISOString(),
+                    likes: 0,
+                    hasVoted: []
+                }
+
+                setTweet('')
+
+                await addDoc(collection(db, "tweets"), newTweet)
+
+                alert('Doc added into firebase')
+
+            })
+
         } catch (e) {
-            alert(e)
+            alert("Error adding document:", e)
         }
     }
 
@@ -71,10 +83,10 @@ const CreateTweet = () => {
             <div className="clickButton">
                 {maxtweet ?
                     <Fragment>
-                        <Button tweetstate={maxtweet}/>
+                        <Button tweetstate={maxtweet} />
                         <p className="message">The tweet can't contain more than 140 chars</p>
                     </Fragment> :
-                    tweet.length > 0   ?
+                    tweet.length > 0 ?
                         <Button tweetstate={maxtweet} handleClick={handleClick} /> :
                         <Button tweetstate={minTweet} />}
             </div>
