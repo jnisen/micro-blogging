@@ -5,15 +5,15 @@ import {useContext} from 'react'
 import Tweet from './Tweet'
 
 /* Context */
-import { TwitterContext } from '../context/twitterContext';
+import TwitterContext from '../context/twitterContext';
 
 const TweetList = () => {
 
     const {tweetsAPI} = useContext(TwitterContext)
 
     return (
-        <div>
-            {tweetsAPI.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)}
+        <div className="tweetlist">
+            {tweetsAPI && tweetsAPI.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)}
         </div>
     )
 }
