@@ -8,12 +8,12 @@ import Tweet from './Tweet'
 import AuthContext from '../context/AuthContext';
 
 const TweetList = () => {
-
     const {tweetsAPI} = useContext(AuthContext)
 
     return (
         <div className="tweetlist">
             {tweetsAPI && tweetsAPI.map((tweet) => <Tweet key={tweet.id} tweet={tweet} />)}
+ 
         </div>
     )
 }

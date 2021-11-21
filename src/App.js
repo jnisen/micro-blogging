@@ -1,6 +1,6 @@
 /* React */
 import { Route } from 'react-router-dom';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 
 /* Components */
 import Navbar from './components/Navbar'
@@ -14,10 +14,12 @@ import PrivateRoute from './components/PrivateRoute'
 import './index.css';
 
 /* Provider */
-import TwitterContext from './context/AuthContext';
+import AuthContext from './context/AuthContext';
 
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { FirebaseContext } from './utils/Firebase'
 
+import { getFirestore, collection, query, where, getDocs, orderBy } from 'firebase/firestore'
 
 function App() {
 
@@ -27,13 +29,25 @@ function App() {
   const [isLoading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState(null)
   const [isUserActive, setIsUserActive] = useState(false)
+  const [loginCustom, setLoginCustom] = useState(true)
+  const [likesAll, setLikesAll] = useState(false)
+  const [filter, setFilter] = useState(false)
+  const [tweetsFilter, setTweetsFilter] = useState([])
+  const [unlike, setUnlike] = useState(false)
+  const [uid, setUid] = useState('')
+  const [userId, setUserId] = useState('')
+  
+  const firebase = useContext(FirebaseContext)
+  const db = getFirestore(firebase);
 
   useEffect(() => {
     const auth = getAuth();
+
     onAuthStateChanged(auth, (user) => {
-      console.log(user)
       if (user) {
-        setCurrentUser({ name: user.displayName, email: user.email, id:user.uid })
+        if (user.displayName) setLoginCustom(false)
+        else setLoginCustom(true)
+        setCurrentUser({ username: user.displayName, email: user.email, id: user.uid })
         setIsUserActive(true)
       }
       else setIsUserActive(true)
@@ -45,6 +59,9 @@ function App() {
     const auth = getAuth();
     signOut(auth).then(() => {
       setCurrentUser(null)
+      setLikesAll(true)
+      setUid("")
+      setUserId('')
     }).catch((e) =>
       alert(e.message)
     )
@@ -54,6 +71,24 @@ function App() {
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
+  const handleLikesHistorial = async () => {
+    let q;
+    setLikesAll(!likesAll)   
+    if (!likesAll) {
+        q = query(collection(db, "tweets"), where("hasVoted", "array-contains", currentUser.id), orderBy("date", "desc"))       
+    } else {
+        q = query(collection(db, "tweets"), orderBy("date", "desc"))
+    };
+    const querySnapshot = await getDocs(q);
+    const list = []
+    querySnapshot.forEach(async (docs) => {
+        list.push({ id: docs.id, ...docs.data() })
+    })
+    
+    
+    setTweetsAPI(list)
+  }
+
 
   const value = {
     tweetsAPI,
@@ -61,25 +96,41 @@ function App() {
     setLoading,
     setTweetsAPI,
     currentUser,
+    loginCustom,
+    setLoginCustom,
+    likesAll,
+    setLikesAll,
+    filter,
+    setFilter,
+    tweetsFilter,
+    setTweetsFilter,
+    unlike,
+    setUnlike,
+    uid,
+    setUid,
+    userId, 
+    setUserId,
     signup,
     login: (currentUser) => setCurrentUser(currentUser),
     loginWithGoogle: (currentUser) => setCurrentUser(currentUser),
-    logout
+    logout,
+    handleLikesHistorial
   }
 
   return (
-    <TwitterContext.Provider value={value}>
+    <AuthContext.Provider value={value}>
       {isUserActive &&
+       
         <div className="app">
           <Navbar />
           <div className="container">
             <PrivateRoute path="/" exact component={Home} />
-            <PrivateRoute path="/profile" component={Profile} />
+            <PrivateRoute path= "/profile/:id" component={Profile} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
           </div>
         </div>}
-    </TwitterContext.Provider>
+    </AuthContext.Provider>
   );
 }
 

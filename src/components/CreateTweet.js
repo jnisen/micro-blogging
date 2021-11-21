@@ -7,8 +7,6 @@ import { nanoid } from 'nanoid';
 /* Components */
 import Button from './Button'
 
-
-
 import { FirebaseContext } from '../utils/Firebase'
 
 import { getFirestore, addDoc, collection, query, where, getDocs } from 'firebase/firestore'
@@ -22,8 +20,6 @@ const CreateTweet = () => {
 
     const [maxtweet, setMaxTweet] = useState(false)
     const [minTweet, setMinTweet] = useState(true)
-
-    const username = localStorage.getItem('username')
 
     const handleChange = e => {
 
@@ -47,12 +43,13 @@ const CreateTweet = () => {
 
             const querySnapshot = await getDocs(q);
 
+        
             querySnapshot.forEach(async (doc) => {
 
                 const newTweet = {
-                    userId: doc.id,
-                    userName: username,
-                    photoProfile: doc.data().profilePhoto || '',
+                    userId: currentUser.id,
+                    userName: doc.data().username,
+                    photoProfile: doc.data().profilePhoto || 'https://us.123rf.com/450wm/thesomeday123/thesomeday1231712/thesomeday123171200009/91087331-icono-de-perfil-de-avatar-predeterminado-para-hombre-marcador-de-posici%C3%B3n-de-foto-gris-vector-de-ilu.jpg?ver=6',
                     content: tweet,
                     date: new Date().toISOString(),
                     likes: 0,

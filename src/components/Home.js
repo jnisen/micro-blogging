@@ -15,25 +15,23 @@ export default function Home() {
     const firebase = useContext(FirebaseContext)
     const db = getFirestore(firebase);
 
-    const { isLoading, setTweetsAPI, setLoading, tweetsAPI } = useContext(AuthContext)
+    const { isLoading, setTweetsAPI, setLoading, tweetsAPI} = useContext(AuthContext)
 
     useEffect(() => {
 
-        const interval = setTimeout(async () => {
 
-            const updateState = (snapShot) => {
-                const tweetsFromDb = []
-                snapShot.forEach(doc => tweetsFromDb.push({ id: doc.id, ...doc.data() }))
-                setTweetsAPI(tweetsFromDb)
-                setLoading(false)
-            }
+        //setInterval
+        const q = query(collection(db, "tweets"), orderBy("date", "desc"))
 
-            const q = query(collection(db, "tweets"), orderBy('date', "desc"));
-            const unsub = onSnapshot(q, (querySnapshot) => updateState(querySnapshot))
-            return () => unsub()
-        }, 1000)
+        onSnapshot(q, (querySnapshot) => {
+            const tweetsFromDb = [];
+            querySnapshot.forEach((doc) => {
+                tweetsFromDb.push({ id: doc.id, ...doc.data() });
+            });
+            setTweetsAPI(tweetsFromDb)
+            setLoading(false)
+        });
 
-        return () => clearInterval(interval);
     }, [])
 
     return (

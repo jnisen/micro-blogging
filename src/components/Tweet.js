@@ -1,105 +1,78 @@
 
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { useState, useContext, useEffect, Fragment} from 'react'
-import { getFirestore, updateDoc, doc, query, collection, getDocs } from 'firebase/firestore'
+import { useState, useContext, useEffect, Fragment } from 'react'
+import { getFirestore, updateDoc, doc, query, collection, getDocs, where, orderBy } from 'firebase/firestore'
 
 /* Context */
 import AuthContext from '../context/AuthContext';
 import { FirebaseContext } from '../utils/Firebase'
-const Tweet = ({ tweet }) => {
-    const { id, userName, content, date, photoProfile, likes, hasVoted } = tweet;
 
-    const [liked, setLiked] = useState(false);
+/* React */
+import { Link } from 'react-router-dom';
+
+
+const Tweet = ({ tweet }) => {
+    const { id, userName, content, date, photoProfile, likes, hasVoted, userId } = tweet;
+    const firebase = useContext(FirebaseContext)
     const [voted, setHasVoted] = useState()
-    const db = getFirestore()
-    const { currentUser } = useContext(AuthContext)
+    const db = getFirestore(firebase)
+    const { currentUser, setLikesAll, tweetsAPI, setUnlike, likesAll, unlike } = useContext(AuthContext)
 
     useEffect(() => {
-
+        //render everytweet 
         const idAndHasVoted = {
             id: id,
             hasVoted: hasVoted
         }
-
         setHasVoted(idAndHasVoted)
 
     }, [tweet])
 
 
     const handleLike = async (id) => {
-
         const sumLike = likes + 1
-
-        const q = query(collection(db, "tweets"));
-
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach(async (docs) => {
-
-            if (docs.id === id) {
-
-                if (!docs.data().hasVoted.includes(currentUser.id)) {
-
-                    const newVoters = [...docs.data().hasVoted, currentUser.id]
-
-                    const ref = doc(db, "tweets", docs.id);
-
-                    await updateDoc(ref, {
-                        likes: sumLike,
-                        hasVoted: newVoters
-                    });
-
-                }
-
-
-            }
-
-        })
-        setLiked(!liked)
-
+        const tweet = tweetsAPI.find(tweet => tweet.id === id)
+        if (!tweet.hasVoted.includes(currentUser.id)) {
+            const votes = [...tweet.hasVoted, currentUser.id]
+            const ref = doc(db, "tweets", id);
+            await updateDoc(ref, {
+                likes: sumLike,
+                hasVoted: votes
+            });
+        }
+        setUnlike(false)
     }
 
     const handleUnlike = async (id) => {
-
         const minusLike = likes - 1
+        const tweet = tweetsAPI.find(tweet => tweet.id === id)
+        if (tweet.hasVoted.includes(currentUser.id)) {
+            const votes = tweet.hasVoted.splice(0, tweet.hasVoted.findIndex(v => v.id === currentUser.id))
+            const ref = doc(db, "tweets", id);
+            await updateDoc(ref, {
+                likes: minusLike,
+                hasVoted: votes
+            });
 
-        const q = query(collection(db, "tweets"));
-
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach(async (docs) => {
-
-            if (docs.id == id) {
-
-                if (docs.data().hasVoted.includes(currentUser.id)) {
-
-                    const ref = doc(db, "tweets", docs.id);
+        }
 
 
-                    const removeHasVoted = docs.data().hasVoted.slice(0, docs.data().hasVoted.findIndex(voted => voted === currentUser.id))
-
-                    await updateDoc(ref, {
-                        likes: minusLike,
-                        hasVoted: removeHasVoted
-
-                    });
-
-
-
-                }
-            }
-
-        })
-        setLiked(!liked)
+        setUnlike(true)
 
     }
 
+    // function handleProfile (userId){
+    //     console.log(userId)
+    // }
+
     return (
         <div className="tweet">
-            <img
+            <Link className="navbar-link" to={`/profile/${userId}`}> 
+            {photoProfile && <img
                 src={photoProfile}
                 alt=""
-                className="img-tweet" />
+                className="img-tweet" />}</Link>
+
             <div className="a1">
                 <div className="dateandname">
                     <small>{userName}</small>
